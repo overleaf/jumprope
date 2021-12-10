@@ -66,9 +66,11 @@ class Rope {
   }
 
   toString() {
-    const strings = []
-    this.forEach(str => strings.push(str))
-    return strings.join('')
+    let result = ''
+    for (const str of this) {
+      result += str
+    }
+    return result
   }
 
   toJSON() { return this.toString() }
@@ -193,7 +195,7 @@ class Rope {
     }
     
     // Only collect strings if we need to.
-    let strings = getDeleted != null ? [] : null
+    let deleted = getDeleted != null ? '' : null
 
     const cursor = this.seek(delPos)
     let e = cursor[0], offset = cursor[1], nodes = cursor[2]
@@ -212,7 +214,7 @@ class Rope {
       if (removed < e.str.length) {
         // We aren't removing the whole node.
         
-        if (strings != null) strings.push(e.str.slice(offset, offset + removed))
+        if (deleted != null) deleted += e.str.slice(offset, offset + removed)
 
         // Splice out the string
         e.str = e.str.slice(0, offset) + e.str.slice(offset + removed)
@@ -226,7 +228,7 @@ class Rope {
       } else {
         // Remove the whole node.
         
-        if (strings != null) strings.push(e.str)
+        if (deleted != null) deleted += e.str
 
         // Unlink the element.
         for (let i = 0; i < nodes.length; i++) {
@@ -244,7 +246,7 @@ class Rope {
       }
       length -= removed
     }
-    if (getDeleted) getDeleted(strings.join(''))
+    if (getDeleted) getDeleted(deleted)
     return this;
   }
 
@@ -256,17 +258,17 @@ class Rope {
 
     let [e, offset] = this.seek(offsetIn)
 
-    const strings = []
+    let result = ''
     if (e.str == null) e = e.nexts[0]
 
     while (e && length > 0) {
       let s = e.str.slice(offset, offset + length)
-      strings.push(s)
+      result += s
       offset = 0
       length -= s.length
       e = e.nexts[0]
     }
-    return strings.join('')
+    return result
   }
 
   // For backwards compatibility.
