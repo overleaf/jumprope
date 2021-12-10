@@ -176,10 +176,7 @@ class Rope {
         this._updateLength(nodes, -end.length)
       }
 
-      // Split up the new string based on SPLIT_SIZE and insert each chunk.
-      for (let i = 0; i < str.length; i += SPLIT_SIZE) {
-        insertPos = this._spliceIn(nodes, subtreesize, insertPos, str.slice(i, i + SPLIT_SIZE))
-      }
+      insertPos = this._spliceIn(nodes, subtreesize, insertPos, str)
       if (end !== '') this._spliceIn(nodes, subtreesize, insertPos, end)
     }
 
